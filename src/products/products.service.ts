@@ -69,15 +69,29 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     async remove(id: number) {
         await this.findOne(id);
 
-        // This is hard delete --->
-        // return this.product.delete({
-        //     where: { id },
-        // });
-
-        // This is soft delete --->
         return await this.product.update({
             where: { id },
             data: { available: false },
         });
+    }
+
+    async validateProducts(ids: number[]) {
+        ids = [...new Set(ids)];
+
+        const products = await this.product.findMany({
+            where: {
+                id: { in: ids },
+                available: true,
+            },
+        });
+
+        if (products.length !== ids.length) {
+            throw new RpcException({
+                status: HttpStatus.NOT_FOUND,
+                message: 'Some products not found',
+            });
+        }
+
+        return products;
     }
 }
