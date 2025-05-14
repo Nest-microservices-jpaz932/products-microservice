@@ -6,3 +6,8 @@
 3. Create a `.env` file based on `.env.template`
 4. Run Prisma migration `npx prisma migrate dev`
 5. Run `npm run start:dev`
+
+## Production
+```
+docker build -f dockerfile.prod -t products-microservice .
+```
